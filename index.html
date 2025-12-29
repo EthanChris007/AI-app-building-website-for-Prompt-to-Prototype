@@ -12,7 +12,6 @@
             --text: #f8fafc;
             --accent: #3b82f6;
             --border: #334155;
-            --lambchop-red: #ef4444;
         }
         body {
             font-family: 'Inter', system-ui, sans-serif;
@@ -63,10 +62,7 @@
             cursor: pointer;
             font-weight: 600;
             font-size: 1rem;
-            transition: transform 0.1s, opacity 0.2s;
         }
-        button:hover { opacity: 0.9; }
-        button:active { transform: scale(0.98); }
         #preview {
             display: flex;
             justify-content: center;
@@ -75,11 +71,10 @@
             border: 2px dashed var(--border);
             border-radius: 12px;
             height: 450px;
-            position: relative;
             overflow: hidden;
         }
         .status-msg { font-size: 0.85rem; color: #94a3b8; margin-top: 12px; text-align: center; }
-        svg { width: 80%; height: 80%; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5)); }
+        svg { width: 80%; height: 80%; }
     </style>
 </head>
 <body>
@@ -92,7 +87,7 @@
     <div class="container">
         <div class="panel">
             <h3>Command Center</h3>
-            <textarea id="userInput" placeholder="e.g., 'A logo for Lambchop' or 'A red button for Velociti'"></textarea>
+            <textarea id="userInput" placeholder="e.g., 'A logo for Lambchop' or 'A table component'"></textarea>
             <button onclick="generateUI()">Generate Component</button>
             <div id="status" class="status-msg">System Idle... Waiting for input.</div>
         </div>
@@ -106,53 +101,42 @@
     </div>
 
     <script>
-        // THE GOLDEN PROMPT
-        const GOLDEN_PROMPT = `Context: Senior SVG UI Designer. Output: Raw <svg> code only. Rules: Use viewBox="0 0 400 400", modern palettes, no text outside SVG.`;
-
         function generateUI() {
             const input = document.getElementById('userInput').value.trim();
             const status = document.getElementById('status');
             const preview = document.getElementById('preview');
             const placeholder = document.getElementById('placeholderText');
 
-            if (!input) {
-                alert("Please enter a brand name or description!");
-                return;
-            }
+            if (!input) return alert("Please enter a description!");
 
-            // Visual feedback
-            placeholder.style.display = 'none';
+            if(placeholder) placeholder.style.display = 'none';
             status.innerText = "Architecting SVG via Golden Prompt...";
 
             setTimeout(() => {
                 status.innerText = "SVG Architected Successfully!";
                 
-                // Universal Extraction: Grabs the last word (e.g., Lambchop)
                 const words = input.split(' ');
                 const name = words[words.length - 1].toUpperCase();
+                const lowerInput = input.toLowerCase();
 
-                if (input.toLowerCase().includes("button")) {
-                    // Button Component
+                if (lowerInput.includes("button")) {
+                    // Renders a Button
+                    preview.innerHTML = `<svg viewBox="0 0 400 400"><rect x="80" y="160" width="240" height="80" rx="40" fill="#ef4444"/><text x="200" y="212" font-family="Arial" font-size="24" fill="white" text-anchor="middle" font-weight="bold">${name}</text></svg>`;
+                } 
+                else if (lowerInput.includes("table")) {
+                    // Renders a Table
                     preview.innerHTML = `
                         <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="80" y="160" width="240" height="80" rx="40" fill="#ef4444"/>
-                            <text x="200" y="212" font-family="Arial" font-size="24" fill="white" text-anchor="middle" font-weight="bold" letter-spacing="2">${name}</text>
+                            <rect x="50" y="150" width="300" height="20" fill="#ef4444" rx="5"/>
+                            <rect x="80" y="170" width="15" height="100" fill="#7f1d1d"/>
+                            <rect x="305" y="170" width="15" height="100" fill="#7f1d1d"/>
+                            <line x1="50" y1="200" x2="350" y2="200" stroke="#7f1d1d" stroke-width="2" />
+                            <text x="200" y="130" font-family="Arial" font-size="24" fill="white" text-anchor="middle" font-weight="bold">PROTOTYPE TABLE</text>
                         </svg>`;
-                } else {
-                    // Professional Brand Logo Component
-                    preview.innerHTML = `
-                        <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
-                            <defs>
-                                <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#7f1d1d;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <circle cx="200" cy="200" r="120" stroke="url(#grad)" stroke-width="8" fill="none" stroke-dasharray="15 10" />
-                            <circle cx="200" cy="200" r="100" fill="#1e293b" opacity="0.5" />
-                            <text x="200" y="215" font-family="Verdana" font-size="30" fill="white" text-anchor="middle" font-weight="bold" letter-spacing="3">${name}</text>
-                            <path d="M140 280 Q200 340 260 280" stroke="#ef4444" stroke-width="4" fill="none" stroke-linecap="round" />
-                        </svg>`;
+                }
+                else {
+                    // Renders a Circular Logo for anything else
+                    preview.innerHTML = `<svg viewBox="0 0 400 400"><circle cx="200" cy="200" r="120" stroke="#ef4444" stroke-width="8" fill="none" stroke-dasharray="15 10" /><text x="200" y="215" font-family="Arial" font-size="30" fill="white" text-anchor="middle" font-weight="bold">${name}</text></svg>`;
                 }
             }, 1000);
         }

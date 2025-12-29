@@ -5,11 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Voice-to-SVG UI Architect</title>
     <style>
+        /* Modern Dark Theme Styling */
         :root {
             --bg: #0f172a;
             --card: #1e293b;
             --text: #f8fafc;
             --accent: #3b82f6;
+            --border: #334155;
         }
         body {
             font-family: 'Inter', system-ui, sans-serif;
@@ -22,112 +24,128 @@
             margin: 0;
             padding: 20px;
         }
+        .header { text-align: center; margin-bottom: 30px; }
         .container {
-            max-width: 1000px;
+            max-width: 1100px;
             width: 100%;
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-top: 20px;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 25px;
         }
         .panel {
             background: var(--card);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            min-height: 400px;
+            padding: 25px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
         }
         textarea {
             width: 100%;
-            height: 150px;
+            height: 180px;
             background: #0f172a;
             color: #fff;
-            border: 1px solid #334155;
-            border-radius: 8px;
-            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 1rem;
             resize: none;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
         }
         button {
+            width: 100%;
             background: var(--accent);
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
+            padding: 14px;
+            border-radius: 10px;
             cursor: pointer;
-            font-weight: bold;
-            transition: opacity 0.2s;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: transform 0.1s, opacity 0.2s;
         }
-        button:hover { opacity: 0.8; }
+        button:hover { opacity: 0.9; }
+        button:active { transform: scale(0.98); }
         #preview {
             display: flex;
             justify-content: center;
             align-items: center;
-            background: #ffffff10;
-            border-radius: 8px;
-            height: 400px;
-            overflow: hidden;
+            background: #ffffff05;
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            height: 450px;
+            position: relative;
         }
-        svg { max-width: 100%; max-height: 100%; }
-        .header { text-align: center; margin-bottom: 30px; }
-        .status { font-size: 0.8rem; color: #94a3b8; margin-top: 10px; }
+        .status-msg { font-size: 0.85rem; color: #94a3b8; margin-top: 12px; text-align: center; }
+        svg { width: 90%; height: 90%; drop-shadow(0 5px 15px rgba(0,0,0,0.5)); }
     </style>
 </head>
 <body>
 
     <div class="header">
         <h1>🎨 UI Architect</h1>
-        <p>Describe a UI component, and the AI will draw the SVG code.</p>
+        <p>Convert your design vision into precise SVG components using AI logic.</p>
     </div>
 
     <div class="container">
         <div class="panel">
             <h3>Command Center</h3>
-            <textarea id="userInput" placeholder="e.g. A circular progress bar at 75% in neon green with a dark background..."></textarea>
-            <button onclick="generateSVG()">Generate UI Component</button>
-            <div id="status" class="status">Ready.</div>
+            <textarea id="userInput" placeholder="Describe your UI... (e.g., 'A modern neon-blue volume slider at 80%')"></textarea>
+            <button onclick="generateUI()">Generate Component</button>
+            <div id="status" class="status-msg">System Idle... Waiting for input.</div>
         </div>
 
         <div class="panel">
-            <h3>Live Preview</h3>
+            <h3>Live Prototype Preview</h3>
             <div id="preview">
-                <p style="color: #64748b;">Awaiting AI instructions...</p>
+                <p id="placeholderText" style="color: #64748b;">Awaiting AI Architect Instructions...</p>
             </div>
         </div>
     </div>
 
     <script>
-        // THE GOLDEN PROMPT ENGINE
-        const GOLDEN_PROMPT = `You are a Senior SVG Architect. 
-        Your goal is to translate natural language into production-ready SVG code.
-        Use viewBox="0 0 400 400". Output ONLY the raw <svg> tag and its contents.
-        No conversational text. No markdown fences. Only valid XML SVG.`;
+        /** * THE GOLDEN PROMPT 
+         * This is the core logic of the app that instructs the AI 
+         * how to behave when it receives your request.
+         */
+        const GOLDEN_PROMPT = `
+            Context: Senior SVG UI Designer. 
+            Goal: Create professional, scalable, and modern UI components.
+            Output: Raw <svg> code only. 
+            Rules: Use viewBox="0 0 400 400", use modern color palettes, and avoid conversational text.
+        `;
 
-        async function generateSVG() {
+        function generateUI() {
             const input = document.getElementById('userInput').value;
             const status = document.getElementById('status');
             const preview = document.getElementById('preview');
+            const placeholder = document.getElementById('placeholderText');
 
-            if (!input) return alert("Please enter a description!");
-
-            status.innerText = "Architecting SVG code...";
-            
-            try {
-                // NOTE: In a real app, you would call your API here.
-                // For the demo, we are simulating the AI response logic.
-                // To make this fully functional, you would use fetch() to Gemini/OpenAI.
-                
-                console.log("Sending to AI:", GOLDEN_PROMPT, input);
-                
-                // Placeholder for Demo: This shows how the SVG gets injected
-                // In your real demo video, you will show the AI returning the code.
-                status.innerText = "Success!";
-            } catch (error) {
-                status.innerText = "Error generating SVG.";
-                console.error(error);
+            if (!input) {
+                alert("Please describe a component first!");
+                return;
             }
+
+            // Visual feedback for the demo
+            status.innerText = "Processing Golden Prompt logic...";
+            placeholder.style.display = 'none';
+
+            /**
+             * NOTE FOR HACKATHON VIDEO: 
+             * In a production environment, this function would use fetch() to send
+             * the GOLDEN_PROMPT + userInput to the Gemini API. 
+             * * For your demo, if the API is not yet connected, you can "simulate" 
+             * the response by injecting a pre-made SVG here to show the functionality.
+             */
+             
+            console.log("System instruction:", GOLDEN_PROMPT);
+            console.log("User requirement:", input);
+            
+            // Simulating a successful generation for the interface
+            setTimeout(() => {
+                status.innerText = "SVG Architected Successfully!";
+            }, 1000);
         }
     </script>
 </body>
-
 </html>

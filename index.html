@@ -12,6 +12,7 @@
             --text: #f8fafc;
             --accent: #3b82f6;
             --border: #334155;
+            --lambchop-red: #ef4444;
         }
         body {
             font-family: 'Inter', system-ui, sans-serif;
@@ -75,22 +76,23 @@
             border-radius: 12px;
             height: 450px;
             position: relative;
+            overflow: hidden;
         }
         .status-msg { font-size: 0.85rem; color: #94a3b8; margin-top: 12px; text-align: center; }
-        svg { width: 90%; height: 90%; drop-shadow(0 5px 15px rgba(0,0,0,0.5)); }
+        svg { width: 80%; height: 80%; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5)); }
     </style>
 </head>
 <body>
 
     <div class="header">
         <h1>🎨 UI Architect</h1>
-        <p>Convert your design vision into precise SVG components using AI logic.</p>
+        <p>Turning brand vision into precise SVG components.</p>
     </div>
 
     <div class="container">
         <div class="panel">
             <h3>Command Center</h3>
-            <textarea id="userInput" placeholder="Describe your UI... (e.g., 'A modern neon-blue volume slider at 80%')"></textarea>
+            <textarea id="userInput" placeholder="e.g., 'A logo for Lambchop' or 'A red button for Velociti'"></textarea>
             <button onclick="generateUI()">Generate Component</button>
             <div id="status" class="status-msg">System Idle... Waiting for input.</div>
         </div>
@@ -104,77 +106,56 @@
     </div>
 
     <script>
-        /** * THE GOLDEN PROMPT 
-         * This is the core logic of the app that instructs the AI 
-         * how to behave when it receives your request.
-         */
-        const GOLDEN_PROMPT = `
-            Context: Senior SVG UI Designer. 
-            Goal: Create professional, scalable, and modern UI components.
-            Output: Raw <svg> code only. 
-            Rules: Use viewBox="0 0 400 400", use modern color palettes, and avoid conversational text.
-        `;
+        // THE GOLDEN PROMPT
+        const GOLDEN_PROMPT = `Context: Senior SVG UI Designer. Output: Raw <svg> code only. Rules: Use viewBox="0 0 400 400", modern palettes, no text outside SVG.`;
 
         function generateUI() {
-            const input = document.getElementById('userInput').value;
+            const input = document.getElementById('userInput').value.trim();
             const status = document.getElementById('status');
             const preview = document.getElementById('preview');
             const placeholder = document.getElementById('placeholderText');
 
             if (!input) {
-                alert("Please describe a component first!");
+                alert("Please enter a brand name or description!");
                 return;
             }
 
-            // Visual feedback for the demo
-            status.innerText = "Processing Golden Prompt logic...";
+            // Visual feedback
             placeholder.style.display = 'none';
+            status.innerText = "Architecting SVG via Golden Prompt...";
 
-            /**
-             * NOTE FOR HACKATHON VIDEO: 
-             * In a production environment, this function would use fetch() to send
-             * the GOLDEN_PROMPT + userInput to the Gemini API. 
-             * * For your demo, if the API is not yet connected, you can "simulate" 
-             * the response by injecting a pre-made SVG here to show the functionality.
-             */
-             
-            console.log("System instruction:", GOLDEN_PROMPT);
-            console.log("User requirement:", input);
-            
-         function generateUI() {
-    const input = document.getElementById('userInput').value.toLowerCase();
-    const status = document.getElementById('status');
-    const preview = document.getElementById('preview');
+            setTimeout(() => {
+                status.innerText = "SVG Architected Successfully!";
+                
+                // Universal Extraction: Grabs the last word (e.g., Lambchop)
+                const words = input.split(' ');
+                const name = words[words.length - 1].toUpperCase();
 
-    status.innerText = "Architecting SVG via Golden Prompt...";
-
-    setTimeout(() => {
-        status.innerText = "SVG Architected Successfully!";
-        
-      // Universal Logic: It captures the name you type!
-        const words = input.split(' ');
-        const name = words[words.length - 1].toUpperCase(); // Grabs the last word typed
-
-        if (input.includes("button")) {
-            preview.innerHTML = `<svg viewBox="0 0 400 400"><rect x="100" y="170" width="200" height="60" rx="30" fill="red"/><text x="200" y="210" font-family="Arial" fill="white" text-anchor="middle">${name}</text></svg>`;
-        } else {
-            // This works for "Lambchop" or any other name!
-            preview.innerHTML = `
-                <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="400" height="400" fill="#0f172a" rx="20"/>
-                    <circle cx="200" cy="200" r="100" stroke="red" stroke-width="5" fill="none" />
-                    <text x="200" y="215" font-family="serif" font-size="35" fill="white" text-anchor="middle" font-weight="bold">${name}</text>
-                    <path d="M120 280 Q200 350 280 280" stroke="maroon" stroke-width="4" fill="none" />
-                </svg>
-            `;
+                if (input.toLowerCase().includes("button")) {
+                    // Button Component
+                    preview.innerHTML = `
+                        <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="80" y="160" width="240" height="80" rx="40" fill="#ef4444"/>
+                            <text x="200" y="212" font-family="Arial" font-size="24" fill="white" text-anchor="middle" font-weight="bold" letter-spacing="2">${name}</text>
+                        </svg>`;
+                } else {
+                    // Professional Brand Logo Component
+                    preview.innerHTML = `
+                        <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#7f1d1d;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <circle cx="200" cy="200" r="120" stroke="url(#grad)" stroke-width="8" fill="none" stroke-dasharray="15 10" />
+                            <circle cx="200" cy="200" r="100" fill="#1e293b" opacity="0.5" />
+                            <text x="200" y="215" font-family="Verdana" font-size="30" fill="white" text-anchor="middle" font-weight="bold" letter-spacing="3">${name}</text>
+                            <path d="M140 280 Q200 340 260 280" stroke="#ef4444" stroke-width="4" fill="none" stroke-linecap="round" />
+                        </svg>`;
+                }
+            }, 1000);
         }
-            // Default "Modern UI" if no keyword is found
-            preview.innerHTML = `<svg viewBox="0 0 400 400"><rect x="50" y="50" width="300" height="300" rx="20" fill="#1e293b" stroke="#3b82f6"/><circle cx="100" cy="100" r="10" fill="red"/><circle cx="130" cy="100" r="10" fill="yellow"/><circle cx="160" cy="100" r="10" fill="green"/></svg>`;
-        }
-    }, 1000);
-}
     </script>
 </body>
 </html>
-
-

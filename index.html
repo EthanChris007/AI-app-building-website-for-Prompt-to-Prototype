@@ -151,13 +151,23 @@
     setTimeout(() => {
         status.innerText = "SVG Architected Successfully!";
         
+      // Universal Logic: It captures the name you type!
+        const words = input.split(' ');
+        const name = words[words.length - 1].toUpperCase(); // Grabs the last word typed
+
         if (input.includes("button")) {
-            preview.innerHTML = `<svg viewBox="0 0 400 400"><rect x="100" y="170" width="200" height="60" rx="30" fill="#3b82f6"/><text x="200" y="210" font-family="Arial" fill="white" text-anchor="middle">SUBMIT</text></svg>`;
-        } else if (input.includes("chart") || input.includes("graph")) {
-            preview.innerHTML = `<svg viewBox="0 0 400 400"><rect x="50" y="300" width="60" height="50" fill="purple"/><rect x="130" y="200" width="60" height="150" fill="gold"/><rect x="210" y="100" width="60" height="250" fill="purple"/></svg>`;
-        } else if (input.includes("logo") || input.includes("velociti")) {
-            preview.innerHTML = `<svg viewBox="0 0 400 400"><circle cx="200" cy="200" r="80" fill="none" stroke="gold" stroke-width="5"/><text x="200" y="210" font-family="Arial" font-size="30" fill="purple" text-anchor="middle" font-weight="bold">VELOCITI</text></svg>`;
+            preview.innerHTML = `<svg viewBox="0 0 400 400"><rect x="100" y="170" width="200" height="60" rx="30" fill="red"/><text x="200" y="210" font-family="Arial" fill="white" text-anchor="middle">${name}</text></svg>`;
         } else {
+            // This works for "Lambchop" or any other name!
+            preview.innerHTML = `
+                <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="400" height="400" fill="#0f172a" rx="20"/>
+                    <circle cx="200" cy="200" r="100" stroke="red" stroke-width="5" fill="none" />
+                    <text x="200" y="215" font-family="serif" font-size="35" fill="white" text-anchor="middle" font-weight="bold">${name}</text>
+                    <path d="M120 280 Q200 350 280 280" stroke="maroon" stroke-width="4" fill="none" />
+                </svg>
+            `;
+        }
             // Default "Modern UI" if no keyword is found
             preview.innerHTML = `<svg viewBox="0 0 400 400"><rect x="50" y="50" width="300" height="300" rx="20" fill="#1e293b" stroke="#3b82f6"/><circle cx="100" cy="100" r="10" fill="red"/><circle cx="130" cy="100" r="10" fill="yellow"/><circle cx="160" cy="100" r="10" fill="green"/></svg>`;
         }
@@ -166,4 +176,5 @@
     </script>
 </body>
 </html>
+
 
